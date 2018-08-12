@@ -20,7 +20,6 @@ class State:
         if (self.data["date"] == other.data["date"] and self.data["time"] == other.data["time"]):
             return True
 
-
     def textParser(self, string):
         self.readed = True
         year, month, day = string.split()[0].split("-")
@@ -52,6 +51,7 @@ class State:
                     self.data["Label"] = ClassLabel["NoLabel"]
         else:
             print("Error:", "len of line is " + str(len(string.split())))
+            
     def writeState(self, file):
         file.write(self.data["date"]+" "+self.data["time"]+" "+self.data["M001"]+" "+self.data["M002"]+" "+self.data["M003"]+" "+
               self.data["M004"]+" "+self.data["M005"]+" "+self.data["M006"]+" "+self.data["M007"]+" "+self.data["M008"]+" "+
@@ -64,6 +64,7 @@ class State:
               self.data["D003"]+" "+self.data["D004"]+" "+self.data["Label"]+"\n")
         global counter
         counter = counter + 1
+        
     def printState(self):
         print(self.data["date"], self.data["time"], self.data["M001"], self.data["M002"], self.data["M003"],
               self.data["M004"], self.data["M005"], self.data["M006"], self.data["M007"], self.data["M008"],
@@ -79,7 +80,6 @@ class State:
         self.datetime = self.datetime + dt.timedelta(0, 1)
         self.data["date"] = str(self.datetime).split()[0]
         self.data["time"] = str(self.datetime).split()[1]
-
 
 def distance(last, new):
     dis = new.datetime - last.datetime
