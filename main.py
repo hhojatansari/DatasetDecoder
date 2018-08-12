@@ -31,10 +31,15 @@ class State:
             "T003" : 20.0, "T004" : 20.0, "T005" : 20.0, "D001" : 0, "D002" : 0, "D003" : 0, "D004" : 0, "Label" : "NoLabel"
         }
 
+    def __eq__(self, other):
+        if (self.data["date"] == other.data["date"] and self.data["time"] == other.data["time"]):
+            return True
+
+
     def textParser(self, string):
         self.readed = True
-        year, month, day = string.split(" ")[0].split("-")
-        hour, minute, second = string.split(" ")[1].split(":")
+        year, month, day = string.split()[0].split("-")
+        hour, minute, second = string.split()[1].split(":")
 
         year = int(year)
         month = int(month)
@@ -47,21 +52,21 @@ class State:
         self.data["date"] = str(year) + "-" + "{0:0=2d}".format(month) + "-" + "{0:0=2d}".format(day)
         self.data["time"] = "{0:0=2d}".format(hour) + ":" + "{0:0=2d}".format(minute) + ":" + "{0:0=2d}".format(second)
 
-        if len(string.split(" ")) == 6 or len(string.split(" ")) == 4:
-            if string.split(" ")[3] == "ON" or string.split(" ")[3] == "OPEN":
-                self.data[string.split(" ")[2]] = 1
-            elif string.split(" ")[3] == "OFF" or string.split(" ")[3] == "CLOSE":
-                self.data[string.split(" ")[2]] = 0
+        if (len(string.split()) == 6 or len(string.split()) == 4):
+            if (string.split()[3] == "ON" or string.split()[3] == "OPEN"):
+                self.data[string.split()[2]] = 1
+            elif (string.split()[3] == "OFF" or string.split()[3] == "CLOSE"):
+                self.data[string.split()[2]] = 0
             else:
-                self.data[string.split(" ")[2]] = string.split(" ")[3]
+                self.data[string.split()[2]] = string.split()[3]
 
-            if len(string.split(" ")) == 6:
-                if string.split(" ")[5] == "begin":
-                    self.data["Label"] = ClassLabel[string.split(" ")[4]]
-                elif string.split(" ")[5] == "end":
+            if (len(string.split()) == 6):
+                if (string.split()[5] == "begin"):
+                    self.data["Label"] = ClassLabel[string.split()[4]]
+                elif (string.split()[5] == "end"):
                     self.data["Label"] = ClassLabel["NoLabel"]
         else:
-            print("Error:", "len of line is " + str(len(string.split(" "))))
+            print("Error:", "len of line is " + str(len(string.split())))
 
     def printState(self):
         print(self.data["date"], self.data["time"], self.data["M001"], self.data["M002"], self.data["M003"],
@@ -76,25 +81,29 @@ class State:
 
     def incrementTime(self):
         self.datetime = self.datetime + dt.timedelta(0, 1)
-        self.data["date"] = str(self.datetime).split(" ")[0]
-        self.data["time"] = str(self.datetime).split(" ")[1]
+        self.data["date"] = str(self.datetime).split()[0]
+        self.data["time"] = str(self.datetime).split()[1]
 
 
 def distance(last, new):
     dis = new.datetime - last.datetime
-    return dis.days * 24 * 60 * 60 + dis.seconds
+    return dis.days * 24 * 60 * 60 + dis.seconds - 1
 
 
 LastState = State()
 NewState = State()
 
-LastState.textParser(t0)
-NewState.textParser(t1)
-LastState.printState()
-NewState.printState()
+outputDataset = open("/home/hhak/testOutPut.txt", "w")
 
-#test
-for i in range(0, distance(LastState, NewState)):
-    LastState.printState()
-    LastState.incrementTime()
+with open("/home/hhak/test.txt", "r") as Dataset:
+    LastState.textParser(Dataset.readline())
+    for line in Dataset:
+        NewState.textParser(line)
+        if(NewState == LastState):
+            LastState.textParser(line)
+        for s in range(0, distance(LastState, NewState)):
+            LastState.printState()
+            LastState.incrementTime()
+        LastState.printState()
+        LastState.textParser(line)
 LastState.printState()
