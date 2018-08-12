@@ -1,7 +1,7 @@
 import datetime as dt
 
-t0 = "2010-11-04 00:03:01.509589 M003 ON Sleeping begin"
-t1 = "2010-11-04 00:03:57.399391 M003 ON Sleeping end"
+t0 = "2010-12-31 23:59:00.09589 M003 ON Sleeping begin"
+t1 = "2010-12-31 23:59:10.4 M003 ON Sleeping end"
 
 ClassLabel = {
     "NoLabel" : "0",
@@ -60,7 +60,6 @@ class State:
                     self.data["Label"] = ClassLabel[string.split(" ")[4]]
                 elif string.split(" ")[5] == "end":
                     self.data["Label"] = ClassLabel["NoLabel"]
-
         else:
             print("Error:", "len of line is " + str(len(string.split(" "))))
 
@@ -75,13 +74,27 @@ class State:
               self.data["T003"], self.data["T004"], self.data["T005"], self.data["D001"], self.data["D002"],
               self.data["D003"], self.data["D004"], self.data["Label"])
 
+    def incrementTime(self):
+        self.datetime = self.datetime + dt.timedelta(0, 1)
+        self.data["date"] = str(self.datetime).split(" ")[0]
+        self.data["time"] = str(self.datetime).split(" ")[1]
+
+
+def distance(last, new):
+    dis = new.datetime - last.datetime
+    return dis.days * 24 * 60 * 60 + dis.seconds
+
 
 LastState = State()
 NewState = State()
 
 LastState.textParser(t0)
-LastState.printState()
-
 NewState.textParser(t1)
-
+LastState.printState()
 NewState.printState()
+
+#test
+for i in range(0, distance(LastState, NewState)):
+    LastState.printState()
+    LastState.incrementTime()
+LastState.printState()
