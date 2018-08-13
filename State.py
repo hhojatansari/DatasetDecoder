@@ -56,7 +56,6 @@ class State:
             self.overloaded = True
         else:
             second = int(round(float(second), 0))
-        print("here", year, month, day, hour, minute, second)
         self.datetime = dt.datetime(year, month, day, hour, minute, second)
         if(self.overloaded):
             self.incrementTime()
