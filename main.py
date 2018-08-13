@@ -46,4 +46,4 @@ with open(directory+"/Dataset/data", "r") as Dataset:
 LastState.writeState(outputDataset)
 outputDataset.close()
 
-print("#output dataset: ", LastState.counter)
+print("#outputDataSet's line: ", LastState.counter)
